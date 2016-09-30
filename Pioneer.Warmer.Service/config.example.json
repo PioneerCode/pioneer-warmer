@@ -1,10 +1,12 @@
 {
   "TimerResolution": 900,
+  "ReponseThreshold": 3,
   "Url": "http://site-to-warm.com",
   "EmailTo": "email_to_notify@email.com",
   "EmailFrom": "email_from@email.com",
   "EmailUsername": "username",
   "EmailPassword": "password",
   "EmailHost": "mail.host.com",
-  "EmailHostPort": 587
+  "EmailHostPort": 587,
+  "Token": "some unique token"
 }

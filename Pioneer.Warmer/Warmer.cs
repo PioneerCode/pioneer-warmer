@@ -41,39 +41,58 @@ namespace Pioneer.Warmer
         /// </summary>
         private bool Warm()
         {
-            // Make request
-            var request = WebRequest.Create(_config.Url);
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            var response = request.GetResponse();
-            stopWatch.Stop();
-
-            // Did it take longer to response then the current expectable threshold?
-            _responseTime = stopWatch.ElapsedMilliseconds;
-            if (_responseTime > _config.ReponseThreshold * 1000)
+            using (var client = new WebClient())
             {
-                Logger.Debug("Warming Failed - Response time of " +  _responseTime / 1000 + " seconds" + 
-                    " seconds was greater then threshold of " + _config.ReponseThreshold + " seconds");
-                response.Close();
-                return false;
-            }
+                var stopWatch = new Stopwatch();
+                stopWatch.Start();
+                var htmlCode = client.DownloadString(_config.Url);
+                stopWatch.Stop();
+                _responseTime = stopWatch.ElapsedMilliseconds;
 
-            // Verify response
-            var data = response.GetResponseStream();
-            if (data == null)
-            {
-                Logger.Warn("Empty Response");
+                if (!IsValidTimeThreshold() || !IsValidResponse(htmlCode))
+                {
+                    return false;
+                }
             }
 
             Logger.Debug("Warming Succeed");
-            response.Close();
             return true;
+        }
+
+        /// <summary>
+        /// Did it take longer to response then the current expectable threshold?
+        /// </summary>
+        private bool IsValidTimeThreshold()
+        {
+            if (!(_responseTime > _config.ReponseThreshold * 1000)) return true;
+
+            Logger.Debug("Warming Failed - Response time of " + _responseTime / 1000 + " seconds" +
+                         " seconds was greater then threshold of " + _config.ReponseThreshold + " seconds");
+            return false;
+        }
+
+        /// <summary>
+        /// Determine if response is valid
+        /// </summary>
+        private bool IsValidResponse(string stream)
+        {
+            if (string.IsNullOrEmpty(stream))
+            {
+                Logger.Warn("Empty Response");
+                return false;
+            }
+
+            if (_config.Token == null) return true;
+            if (stream.Contains(_config.Token)) return true;
+
+            Logger.Warn("Token Missing.");
+            return false;
         }
 
         /// <summary>
         /// Email on failed "ping"
         /// </summary>
-        public void Notify()
+        private void Notify()
         {
             const string body = "<p>Email From: Pioneer Warmer</p>" +
                                 "<p>Request: {0}</p>" +
