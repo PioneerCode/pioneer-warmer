@@ -46,5 +46,10 @@
         /// Email Host port
         /// </summary>
         public int EmailHostPort { get; set; }
+
+        /// <summary>
+        /// Token to search in doc for verification
+        /// </summary>
+        public string Token { get; set; }
     }
 }
