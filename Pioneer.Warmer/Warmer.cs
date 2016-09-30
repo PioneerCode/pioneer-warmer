@@ -83,7 +83,7 @@ namespace Pioneer.Warmer
             {
                 From = new MailAddress(_config.EmailFrom, "Pioneer Warmer"),
                 Subject = "Pioneer Warmer: Failed - " + _config.Url,
-                Body = string.Format(body, _config.Url, _responseTime),
+                Body = string.Format(body, _config.Url, _responseTime / 1000),
                 IsBodyHtml = true,
                 To =
                 {
