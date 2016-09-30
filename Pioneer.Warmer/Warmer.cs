@@ -55,7 +55,7 @@ namespace Pioneer.Warmer
                 }
             }
 
-            Logger.Debug("Warming Succeed");
+            Logger.Debug("Warming Success");
             return true;
         }
 
