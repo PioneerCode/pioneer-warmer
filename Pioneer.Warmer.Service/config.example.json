@@ -1,12 +1,27 @@
 {
-  "TimerResolution": 900,
-  "ReponseThreshold": 3,
-  "Url": "http://site-to-warm.com",
+  "TimerResolution": 30,
+  "WarmOneRandomPagePerTimerLoop": true,
   "EmailTo": "email_to_notify@email.com",
   "EmailFrom": "email_from@email.com",
   "EmailUsername": "username",
   "EmailPassword": "password",
   "EmailHost": "mail.host.com",
   "EmailHostPort": 587,
-  "Token": "some unique token"
+  "Pages": [
+    {
+      "Url": "http://site-to-warm.com",
+      "Token": "some unique token",
+      "ReponseThreshold": 3
+    },
+    {
+      "Url": "http://site-to-warm.com",
+      "Token": "some unique token",
+      "ReponseThreshold": 3
+    },
+    {
+      "Url": "http://site-to-warm.com",
+      "Token": "some unique token",
+      "ReponseThreshold": 3
+    }
+  ]
 }
