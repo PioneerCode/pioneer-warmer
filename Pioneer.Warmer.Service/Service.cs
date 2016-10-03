@@ -33,7 +33,7 @@ namespace Pioneer.Warmer.Service
 
         protected override void OnStart(string[] args)
         {
-            Logger.Debug("Starting Service");
+            Logger.Trace("Starting Service");
             StartTimers();
         }
 
@@ -47,7 +47,7 @@ namespace Pioneer.Warmer.Service
         /// </summary>
         private void StartTimers()
         {
-            Logger.Debug("Starting Timers");
+            Logger.Trace("Starting Timers");
 
             _worker.DoWork += (sender, args) =>
             {
@@ -65,12 +65,12 @@ namespace Pioneer.Warmer.Service
             {
                 if (!_worker.IsBusy)
                 {
-                    Logger.Debug("Running Worker");
+                    Logger.Trace("Running Worker");
                     _worker.RunWorkerAsync();
                 }
                 else
                 {
-                    Logger.Debug("Worker Busy");
+                    Logger.Trace("Worker Busy");
                 }
             };
 
