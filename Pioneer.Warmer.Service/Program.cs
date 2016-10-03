@@ -7,6 +7,7 @@ using System.Threading;
 using Autofac;
 using Newtonsoft.Json;
 using NLog;
+using Pioneer.Warmer.Services;
 
 namespace Pioneer.Warmer.Service
 {
@@ -19,17 +20,12 @@ namespace Pioneer.Warmer.Service
         /// </summary>
         private static IContainer BuildContainer()
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var builder = new ContainerBuilder();
 
-            // Register configuration
             builder.RegisterInstance(BuildConfig());
-
-            // Register all warmers
-            builder.RegisterAssemblyTypes(assemblies)
-                .Where(x => typeof(IWarmer).IsAssignableFrom(x))
-                .AsImplementedInterfaces();
-
+            builder.RegisterType<Warmer>().As<IWarmer>();
+            builder.RegisterType<NotificationService>().As<INotificationService>();
+            builder.RegisterType<ValidationService>().As<IValidationService>();
             builder.RegisterType<Service>().As<Service>();
 
             // Build up autofac container
