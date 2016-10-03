@@ -1,4 +1,6 @@
-﻿namespace Pioneer.Warmer
+﻿using System.Collections.Generic;
+
+namespace Pioneer.Warmer
 {
     public class Config
     {
@@ -8,14 +10,11 @@
         public double TimerResolution { get; set; }
 
         /// <summary>
-        /// Valid length of seconds to get request
+        /// Per timer loop
+        /// If true randomly select on page to warm
+        /// If false warm all pages
         /// </summary>
-        public double ReponseThreshold { get; set; }
-
-        /// <summary>
-        /// Url to warm
-        /// </summary>
-        public string Url { get; set; }
+       public bool WarmOneRandomPagePerTimerLoop { get; set; }
 
         /// <summary>
         /// Email to notify if an issue
@@ -48,8 +47,26 @@
         public int EmailHostPort { get; set; }
 
         /// <summary>
+        /// List of pages to warm
+        /// </summary>
+        public List<Page> Pages { get; set; }
+    }
+
+    public class Page
+    {
+        /// <summary>
+        /// URL to warm
+        /// </summary>
+        public string Url { get; set; }
+
+        /// <summary>
         /// Token to search in doc for verification
         /// </summary>
         public string Token { get; set; }
+
+        /// <summary>
+        /// Valid length of seconds to get request
+        /// </summary>
+        public double ReponseThreshold { get; set; }
     }
 }

@@ -86,6 +86,7 @@ namespace Pioneer.Warmer.Service
 
             Console.WriteLine();
             Console.WriteLine("Press any key to stop the services and end the process...");
+            Console.WriteLine();
             Console.ReadKey();
             Console.WriteLine();
 

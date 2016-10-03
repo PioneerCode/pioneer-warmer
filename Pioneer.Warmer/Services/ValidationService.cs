@@ -16,12 +16,13 @@ namespace Pioneer.Warmer.Services
         /// Did it take longer to response then the current expectable threshold?
         /// </summary>
         /// <param name="responseTime">Response time in milliseconds</param>
-        public bool IsValidTimeThreshold(double responseTime)
+        /// <param name="page">Page in the process of being warmed</param>
+        public bool IsValidTimeThreshold(double responseTime, Page page)
         {
-            if (!(responseTime > _config.ReponseThreshold * 1000)) return true;
+            if (!(responseTime > page.ReponseThreshold * 1000)) return true;
 
-            Logger.Debug("Warming Failed - Response time of " + responseTime / 1000 + " seconds" +
-                         " seconds was greater then threshold of " + _config.ReponseThreshold + " seconds");
+            Logger.Warn("Warming Failed - Response time of " + responseTime / 1000 + " seconds" +
+                         " seconds was greater then threshold of " + page.ReponseThreshold + " seconds");
             return false;
         }
 
@@ -29,25 +30,26 @@ namespace Pioneer.Warmer.Services
         /// Determine if response is valid
         /// </summary>
         /// <param name="stream">Response stream - HTML</param>
-        public bool IsValidResponse(string stream)
+        /// <param name="page">Page in the process of being warmed</param>
+        public bool IsValidResponse(string stream, Page page)
         {
             if (string.IsNullOrEmpty(stream))
             {
-                Logger.Warn("Empty Response");
+                Logger.Debug("Empty Response : " + page.Url);
                 return false;
             }
 
-            if (_config.Token == null) return true;
-            if (stream.Contains(_config.Token)) return true;
+            if (page.Token == null) return true;
+            if (stream.Contains(page.Token)) return true;
 
-            Logger.Warn("Token Missing");
+            Logger.Debug("Token Missing : " + page.Url);
             return false;
         }
     }
 
     public interface IValidationService
     {
-        bool IsValidTimeThreshold(double responseTime);
-        bool IsValidResponse(string stream);
+        bool IsValidTimeThreshold(double responseTime, Page page);
+        bool IsValidResponse(string stream, Page page);
     }
 }

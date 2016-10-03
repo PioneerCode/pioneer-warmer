@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Net;
 using NLog;
 using Pioneer.Warmer.Services;
@@ -18,8 +19,8 @@ namespace Pioneer.Warmer
         private readonly IValidationService _validationService;
         private readonly INotificationService _notificationService;
 
-        public Warmer(Config config, 
-            IValidationService validationService, 
+        public Warmer(Config config,
+            IValidationService validationService,
             INotificationService notificationService)
         {
             _config = config;
@@ -32,33 +33,44 @@ namespace Pioneer.Warmer
         /// </summary>
         public void Run()
         {
-            Warm();
+            if (_config.WarmOneRandomPagePerTimerLoop)
+            {
+                var rnd = new Random();
+                Warm(_config.Pages[rnd.Next(_config.Pages.Count)]);
+                return;
+            }
+
+            foreach (var page in _config.Pages)
+            {
+                Warm(page);
+            }
         }
 
         /// <summary>
         /// Make a web request to site
         /// </summary>
-        private void Warm()
+        private void Warm(Page page)
         {
             using (var client = new WebClient())
             {
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
-                var htmlCode = client.DownloadString(_config.Url);
+                var htmlCode = client.DownloadString(page.Url);
                 stopWatch.Stop();
 
-                if (!_validationService.IsValidTimeThreshold(stopWatch.ElapsedMilliseconds))
+                if (!_validationService.IsValidTimeThreshold(stopWatch.ElapsedMilliseconds, page))
                 {
-                    _notificationService.NotifyResponseThresholdExceeded(stopWatch.ElapsedMilliseconds);
+                    _notificationService.NotifyResponseThresholdExceeded(stopWatch.ElapsedMilliseconds, page);
                     return;
                 }
 
-                if (!_validationService.IsValidResponse(htmlCode))
+                if (!_validationService.IsValidResponse(htmlCode, page))
                 {
-                    _notificationService.NotifyInvalidReponse(htmlCode);
+                    _notificationService.NotifyInvalidReponse(htmlCode, page);
                     return;
                 }
-                Logger.Debug("Warming Success - Response time of " + stopWatch.ElapsedMilliseconds / 1000 + " seconds");
+
+                Logger.Debug("Warming Success " + page.Url + " - Response time of " + stopWatch.ElapsedMilliseconds / 1000 + " seconds");
             }
         }
     }

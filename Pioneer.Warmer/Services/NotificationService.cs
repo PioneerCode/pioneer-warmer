@@ -19,7 +19,8 @@ namespace Pioneer.Warmer.Services
         /// Notify response threshold has been exceeded 
         /// </summary>
         /// <param name="responseTime">Response time in milliseconds</param>
-        public void NotifyResponseThresholdExceeded(double responseTime)
+        /// <param name="page">Page in the process of being warmed</param>
+        public void NotifyResponseThresholdExceeded(double responseTime, Page page)
         {
             const string body = "<p>Request: {0}</p>" +
                                 "<p>Time to respond: {1}</p>";
@@ -28,7 +29,7 @@ namespace Pioneer.Warmer.Services
             {
                 From = new MailAddress(_config.EmailFrom, "Pioneer Warmer"),
                 Subject = "Pioneer Warmer: Request threshold exceeded",
-                Body = string.Format(body, _config.Url, responseTime / 1000),
+                Body = string.Format(body, page.Url, responseTime / 1000),
                 IsBodyHtml = true,
                 To =
                 {
@@ -41,7 +42,8 @@ namespace Pioneer.Warmer.Services
         /// Notify response threshold has been exceeded 
         /// </summary>
         /// <param name="stream">Response stream - HTML</param>
-        public void NotifyInvalidReponse(string stream)
+        /// <param name="page">Page in the process of being warmed</param>
+        public void NotifyInvalidReponse(string stream, Page page)
         {
             var body = stream == null ? "<p>NULL Body.</p>" : "<p>Token missing.</p>";
 
@@ -49,7 +51,7 @@ namespace Pioneer.Warmer.Services
             {
                 From = new MailAddress(_config.EmailFrom, "Pioneer Warmer"),
                 Subject = "Pioneer Warmer: Invalid Response",
-                Body = string.Format("<p>Request: {0}</p>" + body, _config.Url),
+                Body = string.Format("<p>Request: {0}</p>" + body, page.Url),
                 IsBodyHtml = true,
                 To =
                 {
@@ -87,7 +89,7 @@ namespace Pioneer.Warmer.Services
 
     public interface INotificationService
     {
-        void NotifyResponseThresholdExceeded(double responseTime);
-        void NotifyInvalidReponse(string stream);
+        void NotifyResponseThresholdExceeded(double responseTime, Page page);
+        void NotifyInvalidReponse(string stream, Page page);
     }
 }
