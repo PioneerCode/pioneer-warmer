@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\ValidationService.cs" />
     <Compile Include="Warmer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
