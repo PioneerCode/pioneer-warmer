@@ -51,29 +51,56 @@ namespace Pioneer.Warmer
         /// </summary>
         private void Warm(Page page)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var htmlCode = GetPage(page.Url);
+            stopWatch.Stop();
+
+            if (string.IsNullOrEmpty(htmlCode))
+            {
+                _notificationService.NotifyFailedReponse(page.Url);
+                return;
+            }
+
+            if (!_validationService.IsValidTimeThreshold(stopWatch.ElapsedMilliseconds, page))
+            {
+                _notificationService.NotifyResponseThresholdExceeded(stopWatch.ElapsedMilliseconds, page);
+                return;
+            }
+
+            if (!_validationService.IsValidResponse(htmlCode, page))
+            {
+                _notificationService.NotifyInvalidReponse(htmlCode, page);
+                return;
+            }
+
+            Logger.Debug("Warming Success " + page.Url + " - Response time of " + stopWatch.ElapsedMilliseconds / 1000 +
+                         " seconds");
+        }
+
+        /// <summary>
+        /// Get 
+        /// Manage exceptions
+        /// - Including 404
+        /// TODO: Consider need to check response types and handle individually.
+        /// </summary>
+        private static string GetPage(string url)
+        {
             using (var client = new WebClient())
             {
-                var stopWatch = new Stopwatch();
-                stopWatch.Start();
-                var htmlCode = client.DownloadString(page.Url);
-                stopWatch.Stop();
-
-                if (!_validationService.IsValidTimeThreshold(stopWatch.ElapsedMilliseconds, page))
+                try
                 {
-                    _notificationService.NotifyResponseThresholdExceeded(stopWatch.ElapsedMilliseconds, page);
-                    return;
+                    return client.DownloadString(url);
                 }
-
-                if (!_validationService.IsValidResponse(htmlCode, page))
+                catch (Exception ex)
                 {
-                    _notificationService.NotifyInvalidReponse(htmlCode, page);
-                    return;
+                    Logger.Warn("Exception during page request: " + ex);
+                    return "";
                 }
-
-                Logger.Debug("Warming Success " + page.Url + " - Response time of " + stopWatch.ElapsedMilliseconds / 1000 + " seconds");
             }
         }
     }
+
 
     public interface IWarmer
     {
