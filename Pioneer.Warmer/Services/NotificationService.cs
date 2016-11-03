@@ -60,6 +60,24 @@ namespace Pioneer.Warmer.Services
             });
         }
 
+        /// <summary>
+        /// Notify we got something besides 200 level response 
+        /// </summary>
+        /// <param name="url">Paged tested</param>
+        public void NotifyFailedReponse(string url)
+        {
+            SendEmailNotification(new MailMessage
+            {
+                From = new MailAddress(_config.EmailFrom, "Pioneer Warmer"),
+                Subject = "Pioneer Warmer: Failed Response",
+                Body = $"<p>Request: {url}</p><p>Most likely 404.</p>",
+                IsBodyHtml = true,
+                To =
+                {
+                    new MailAddress(_config.EmailTo)
+                }
+            });
+        }
 
         /// <summary>
         /// Send pre-configured notification email 
@@ -91,5 +109,6 @@ namespace Pioneer.Warmer.Services
     {
         void NotifyResponseThresholdExceeded(double responseTime, Page page);
         void NotifyInvalidReponse(string stream, Page page);
+        void NotifyFailedReponse(string url);
     }
 }
