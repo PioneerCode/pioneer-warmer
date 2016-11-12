@@ -23,7 +23,8 @@ If that token is not found, it sends an email notification.
 ## Config
 You can use the [config-example.sjon](config-example.json) as a starting point and refernce [Config.cs](config.cs) for more details.
 
-```json{
+```json
+{
   "TimerResolution": 30,
   "WarmOneRandomPagePerTimerLoop": true,
   "EmailTo": "email_to_notify@email.com",
