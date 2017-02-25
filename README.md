@@ -5,7 +5,7 @@ Pioneer Warmer is a Windows Service used to serve the following needs.
   * On budget hosting plans...
     * Often a site that has not received traffic from a pre-determined amount of time will be paused or stopped to free up resources on the server in question.
     * This causes the next incoming request to that paused/stopped site to trigger a restart.
-      * Causing assets to re-assigned and recompiles on compiled code.  
+      * Causing assets to be recompiled.  
       * Of which negatively affects the performance (load time) of that request. 
 * Determine if x-number of pages are valid.
   * A valid state means the service is able to identify a user-defined token on any of the pages in a collection.
